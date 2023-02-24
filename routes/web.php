@@ -1,5 +1,8 @@
 <?php
 
+use App\Category;
+use App\Tag;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,5 +17,14 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
+
+    $tags = Tag::select('id', 'name')->orderByDesc(
+        DB::table('post_tag')
+        ->selectRaw('count(tag_id) as tag_count')
+        ->whereColumn('tags.id', 'post_tag.tag_id')
+        ->orderBy('tag_count', 'desc')
+        ->limit(1)
+    )->get();
+    dump($tags->toArray());
     return view('welcome');
 });
