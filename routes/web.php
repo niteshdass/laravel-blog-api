@@ -1,6 +1,7 @@
 <?php
 
 use App\Category;
+use App\Comment;
 use App\Post;
 use App\Tag;
 use Illuminate\Support\Facades\DB;
@@ -28,9 +29,28 @@ Route::get('/', function () {
     // )->get();
 
     //! Get latest 5 posts and their number of comments
-    $posts = Post::select('id', 'title', 'content', 'created_at')->withCount('comments')->latest()->take(5)->get();
+    // $posts = Post::select('id', 'title', 'content', 'created_at')->withCount('comments')->latest()->take(5)->get();
+
+    //! FInd most popular post and its comments
+    //# Way 1
+    $post = Post::select('id', 'title', 'content', 'created_at')
+    ->withCount('comments')
+    ->orderByDesc('comments_count')
+    ->get();
+
+    //# Way 2
+
+    $post = Post::select('id', 'title', 'content', 'created_at')
+    ->orderByDesc(
+        Comment::selectRaw('count(comments.id) as comments_count')
+        ->whereColumn('posts.id', 'comments.post_id')
+        ->orderBy('comments_count', 'desc')
+        ->limit(1)
+    )
+    ->withCount('comments')
+    ->get();
 
 
-    dump($posts->toArray());
+    dump($post->toArray());
     return view('welcome');
 });
