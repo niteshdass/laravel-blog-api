@@ -1,6 +1,7 @@
 <?php
 
 use App\Category;
+use App\Post;
 use App\Tag;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
@@ -17,14 +18,19 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
+    //! Get all tags with order by most used tag
+    // $tags = Tag::select('id', 'name')->orderByDesc(
+    //     DB::table('post_tag')
+    //     ->selectRaw('count(tag_id) as tag_count')
+    //     ->whereColumn('tags.id', 'post_tag.tag_id')
+    //     ->orderBy('tag_count', 'desc')
+    //     ->limit(1)
+    // )->get();
 
-    $tags = Tag::select('id', 'name')->orderByDesc(
-        DB::table('post_tag')
-        ->selectRaw('count(tag_id) as tag_count')
-        ->whereColumn('tags.id', 'post_tag.tag_id')
-        ->orderBy('tag_count', 'desc')
-        ->limit(1)
-    )->get();
-    dump($tags->toArray());
+    //! Get latest 5 posts and their number of comments
+    $posts = Post::select('id', 'title', 'content', 'created_at')->withCount('comments')->latest()->take(5)->get();
+
+
+    dump($posts->toArray());
     return view('welcome');
 });
