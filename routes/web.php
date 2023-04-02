@@ -38,5 +38,8 @@ Route::get('/', function () {
 
     // dd($tags->toArray());
 
+    $posts = Post::select('id', 'title')->latest()->take(5)->withCount('comments')->get();
+    dd($posts->toArray());
+
     return view('welcome');
 });
