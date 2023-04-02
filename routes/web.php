@@ -29,7 +29,7 @@ Route::get('/', function () {
     // )->get();
 
     // $tags = DB::table('tags')
-    //         ->selectRaw('tags.*, COUNT(post_tag.tag_id) as tag_count')
+    //         ->selectRaw('name, COUNT(post_tag.tag_id) as tag_count')
     //         ->leftJoin('post_tag', 'tags.id', '=', 'post_tag.tag_id')
     //         ->groupBy('tags.id')
     //         ->orderByDesc('tag_count')
@@ -38,8 +38,18 @@ Route::get('/', function () {
 
     // dd($tags->toArray());
 
-    $posts = Post::select('id', 'title')->latest()->take(5)->withCount('comments')->get();
+    // $posts = Post::select('id', 'title')->latest()->take(5)->withCount('comments')->get();
+    // dd($posts->toArray());
+    
+    $posts = DB::table('posts')
+    ->selectRaw('posts.*, COUNT(comments.post_id) as count_comments')
+    ->leftJoin('comments', 'posts.id', '=', 'comments.post_id')
+    ->groupBy('posts.id')
+    ->orderByDesc('count_comments')
+    ->get();
+
     dd($posts->toArray());
+
 
     return view('welcome');
 });
