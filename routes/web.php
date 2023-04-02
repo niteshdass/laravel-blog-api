@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    //! Get all tags with order by most used tag
+   
     // $tags = Tag::select('id', 'name')->orderByDesc(
     //     DB::table('post_tag')
     //     ->selectRaw('count(tag_id) as tag_count')
@@ -28,29 +28,15 @@ Route::get('/', function () {
     //     ->limit(1)
     // )->get();
 
-    //! Get latest 5 posts and their number of comments
-    // $posts = Post::select('id', 'title', 'content', 'created_at')->withCount('comments')->latest()->take(5)->get();
+    // $tags = DB::table('tags')
+    //         ->selectRaw('tags.*, COUNT(post_tag.tag_id) as tag_count')
+    //         ->leftJoin('post_tag', 'tags.id', '=', 'post_tag.tag_id')
+    //         ->groupBy('tags.id')
+    //         ->orderByDesc('tag_count')
+    //         ->get();
+            
 
-    //! FInd most popular post and its comments
-    //# Way 1
-    $post = Post::select('id', 'title', 'content', 'created_at')
-    ->withCount('comments')
-    ->orderByDesc('comments_count')
-    ->get();
+    // dd($tags->toArray());
 
-    //# Way 2
-
-    $post = Post::select('id', 'title', 'content', 'created_at')
-    ->orderByDesc(
-        Comment::selectRaw('count(comments.id) as comments_count')
-        ->whereColumn('posts.id', 'comments.post_id')
-        ->orderBy('comments_count', 'desc')
-        ->limit(1)
-    )
-    ->withCount('comments')
-    ->get();
-
-
-    dump($post->toArray());
     return view('welcome');
 });

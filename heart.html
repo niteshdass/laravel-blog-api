@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Hearts Animation</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        .btn {
+            width: 100%;
+            height: 100px;
+            color: white;
+            background: red;
+            font-size: 40px;
+            font-weight: 900;
+        }
+
+        .heart {
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            width: 200px;
+            height: 200px;
+            background-image: url('heart.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            transform: translateX(-50%) rotate(20deg);
+            animation: fly-heart 2s ease-out infinite;
+            z-index: 1;
+        }
+
+        .about-section {
+            padding: 50px;
+            text-align: center;
+            background-color: #f7f7f7;
+        }
+
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .column {
+            flex-basis: 45%;
+            padding: 10px;
+        }
+
+        .column img {
+            width: 100%;
+            height: auto;
+        }
+
+        .hide {
+            display: none;
+        }
+
+        @media screen and (max-width: 768px) {
+            .column {
+                flex-basis: 100%;
+            }
+        }
+
+        @keyframes fly-heart {
+            0% {
+                top: 100%;
+            }
+
+            100% {
+                top: -20%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <button class="btn" onclick="createHeart()">Please love me</button>
+    <div class="about-section">
+        <h3 style="font-size: 36px;">My Dear Rajkonna</h3>
+        <p style="font-weight: 600; font-size: 30px;">"Being with you feels like a dream come true, and I thank my lucky
+            stars every day for bringing you into my life."</p>
+        <div class="row">
+            <div class="column">
+                <img src="raj.jpeg" alt="Placeholder Image">
+            </div>
+            <div class="column">
+                <h3>ভালোবাসি ভালোবাসি</h3>
+                <p>ধরো কাল তোমার পরীক্ষা
+                    রাত জেগে পড়ার টেবিলে বসে আছো
+                    ঘুম আসছে না তোমার
+                    হঠাৎ করে ভয়ার্ত কন্ঠে উঠে আমি বললাম,
+                    ভালোবাসো?
+                    তুমি কি রাগ করবে?
+                    নাকি উঠে এসে জড়িয়ে ধরে বলবে
+                    ভালোবাসি ভালোবাসি</p>
+            </div>
+        </div>
+    </div>
+    <div class="container"></div>
+    <script>
+let timeoutId;
+        function createHeart() {
+            document.querySelector('.about-section').classList.add('hide');
+            let i = 0;
+            if (timeoutId) {
+                clearTimeout(timeoutId);
+            }
+            // Call the setTimeout function with a new timeout ID
+            timeoutId = setTimeout(function () {
+                document.querySelector('.about-section').classList.remove('hide');
+            }, 10000); // 10 seconds
+            for (i = 0; i < 20; i++) {
+                const heart = document.createElement('div');
+                heart.classList.add('heart');
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.animationDelay = Math.random() * 4 + 's';
+                document.querySelector('.container').appendChild(heart);
+                setTimeout(() => {
+                    heart.remove();
+                }, 10000);
+            }
+            i = 0;
+        }
+    </script>
+</body>
+
+</html>
