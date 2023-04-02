@@ -41,14 +41,25 @@ Route::get('/', function () {
     // $posts = Post::select('id', 'title')->latest()->take(5)->withCount('comments')->get();
     // dd($posts->toArray());
     
-    $posts = DB::table('posts')
-    ->selectRaw('posts.*, COUNT(comments.post_id) as count_comments')
-    ->leftJoin('comments', 'posts.id', '=', 'comments.post_id')
-    ->groupBy('posts.id')
-    ->orderByDesc('count_comments')
-    ->get();
+ //! with out relationship
+
+    // $posts = DB::table('posts')
+    // ->selectRaw('posts.*, COUNT(comments.post_id) as count_comments')
+    // ->leftJoin('comments', 'posts.id', '=', 'comments.post_id')
+    // ->groupBy('posts.id')
+    // ->orderByDesc('count_comments')
+    // ->get();
+    //! If has relationship than use this type of query
+    $posts = Category::select('id', 'title')
+            ->withCount('comments')
+            ->orderByDesc('comments_count')
+            ->get();
+
 
     dd($posts->toArray());
+
+
+
 
 
     return view('welcome');
