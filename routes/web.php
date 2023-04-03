@@ -50,11 +50,12 @@ Route::get('/', function () {
     // ->orderByDesc('count_comments')
     // ->get();
     //! If has relationship than use this type of query
-    $posts = Category::select('id', 'title')
-            ->withCount('comments')
-            ->orderByDesc('comments_count')
-            ->get();
+    // $posts = Category::select('id', 'title')
+    //         ->withCount('comments')
+    //         ->orderByDesc('comments_count')
+    //         ->get();
 
+    $posts = Category::with('comments')->get();
 
     dd($posts->toArray());
 
