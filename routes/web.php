@@ -55,9 +55,17 @@ Route::get('/', function () {
     //         ->orderByDesc('comments_count')
     //         ->get();
 
-    $posts = Category::with(['comments' => function($query) {
-        $query->select('title');
-    }])->get();
+    // $posts = Category::with(['comments' => function($query) {
+    //     $query->select('title');
+    // }])->get();
+
+    $title = 'quisquam';
+    $content = 'Consectetur';
+
+    $posts = Post::select('title', 'content')
+    ->where('title', 'like', "%$title%")
+    ->orWhere('content', 'like', "%$content%")
+    ->get();
 
     dd($posts->toArray());
 
