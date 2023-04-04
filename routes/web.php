@@ -55,7 +55,9 @@ Route::get('/', function () {
     //         ->orderByDesc('comments_count')
     //         ->get();
 
-    $posts = Category::with('comments')->get();
+    $posts = Category::with(['comments' => function($query) {
+        $query->select('title');
+    }])->get();
 
     dd($posts->toArray());
 
