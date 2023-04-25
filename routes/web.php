@@ -59,16 +59,55 @@ Route::get('/', function () {
     //     $query->select('title');
     // }])->get();
 
-    $title = 'quisquam';
-    $content = 'Consectetur';
+    $content = 'aliquam*';
+    $sortBy = 'user_id, title';
+    $sortByMostCommented = true;
+    $filterByUserId = null;
+    $filterByHighRatting = true;
 
-    $posts = Post::select('title', 'content')
-    ->where('title', 'like', "%$title%")
-    ->orWhere('content', 'like', "%$content%")
-    ->get();
 
-    dd($posts->toArray());
+    // $posts = Post::select('title', 'content')
+    // ->where('title', 'like', "%$title%")
+    // ->orWhere('content', 'like', "%$content%")
+    // ->get();
 
+    // Make full text index field
+    $posts = DB::table('posts')
+            ->whereRaw("MATCH(title, content) AGAINST(? IN BOOLEAN MODE)", [$content]);
+    $posts->when($filterByHighRatting, function($q, $filterByHighRatting) {
+        return $q->whereExists(function($query) {
+            return $query->select('*')
+            ->from('comments')
+            ->whereColumn('comments.post_id', 'posts.id')
+            ->where('comments.content', 'like', '%Molestiae%')
+            ->limit(1);
+        });
+    });  
+    $posts->when($filterByUserId, function ($q, $filterByUserId) {
+        return $q->where('user_id', $filterByUserId);
+    });
+    $posts->when($sortBy, function ($query, $sortBy) {
+        return $query->orderByRaw($sortBy);
+    }, function ($query) {
+        //! It only call when $sortBy will be null or empty
+        return $query->orderByRaw('created_at', 'desc');
+    });
+    $posts->when($sortByMostCommented, function($q) {
+        return $q->orderByDesc(
+            DB::table('comments')
+            ->selectRaw('count(comments.post_id)')
+            ->whereColumn('comments.post_id', 'posts.id')
+            ->orderByRaw('count(comments.post_id) DESC')
+            ->limit(1)
+        );
+    });
+    $posts = $posts->paginate(10);
+
+        //!  there are several options you can use with the AGAINST clause in a full-text search query in Laravel
+        // IN NATURAL LANGUAGE MODE
+        // IN BOOLEAN MODE
+
+    dd($posts);
 
 
 

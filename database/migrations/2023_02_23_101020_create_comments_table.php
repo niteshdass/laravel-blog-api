@@ -23,6 +23,8 @@ class CreateCommentsTable extends Migration
 
             $table->text('content');
 
+            $table->index('post_id');
+
             $table->timestamps();
             
         });
